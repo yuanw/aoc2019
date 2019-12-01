@@ -38,8 +38,11 @@ nixpkgs.stdenv.mkDerivation {
 
 * Day1
 fix point ?
+https://chrispenner.ca/posts/advent-of-optics-01
+
 
 * TODOs
 ** wire current directory
-https://hackage.haskell.org/package/directory-1.3.4.0/docs/System-Directory.html
+https://hackage.haskell.org/package/directory-1.https://chrispenner.ca/posts/advent-of-optics-01
+3.4.0/docs/System-Directory.html
 getCurrentDirectory

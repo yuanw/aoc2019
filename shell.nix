@@ -1,6 +1,7 @@
 { nixpkgs ? import <nixpkgs> {} , compiler ? "ghc865" }:
 let
   inherit (nixpkgs) haskellPackages;
+  myPackages = haskellPackages.callCabal2nix "project" ./aoc2019.cabal {};
 
   bootstrap = import <nixpkgs> { };
 
@@ -15,15 +16,14 @@ let
   pinnedPkgs = import src { };
   all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
 in
-nixpkgs.stdenv.mkDerivation {
-  name = "env";
-  buildInputs = with nixpkgs.haskellPackages;
+ haskellPackages.shellFor {
+   withHoogle = true;
+   packages = p: [myPackages];
+   buildInputs = with nixpkgs.haskellPackages;
     [ hlint
       ghcid
       stylish-haskell
-      ormolu
       hoogle
       (all-hies.selection {selector = p: {inherit (p) ghc865; };})
-    ] ++ [pinnedPkgs.cabal-install
-          nixpkgs.ghc];
+    ] ++ [pinnedPkgs.cabal-install];
 }

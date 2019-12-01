@@ -5,7 +5,7 @@ fuel x = (x `div` 3) - 2
 
 readInput :: IO [Int]
 readInput = do
-  content <- readFile "input/day1.txt"
+  content <- readFile "./input/day1.txt"
   return $ map read $ lines content
 
 result :: IO [Int] -> IO Int
