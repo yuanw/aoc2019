@@ -1,3 +1,9 @@
+#+TITLE: Advent of Code 2019
+
+* Setup
+
+** bootstrap a nix environment
+#+BEGIN_SRC nix
 { nixpkgs ? import <nixpkgs> {} , compiler ? "ghc865" }:
 let
   inherit (nixpkgs) haskellPackages;
@@ -27,3 +33,13 @@ nixpkgs.stdenv.mkDerivation {
     ] ++ [pinnedPkgs.cabal-install
           nixpkgs.ghc];
 }
+#+END_SRC
+** cabal init
+
+* Day1
+fix point ?
+
+* TODOs
+** wire current directory
+https://hackage.haskell.org/package/directory-1.3.4.0/docs/System-Directory.html
+getCurrentDirectory
