@@ -30,12 +30,11 @@ nixpkgs.stdenv.mkDerivation {
       ormolu
       hoogle
       (all-hies.selection {selector = p: {inherit (p) ghc865; };})
-    ] ++ [pinnedPkgs.cabal-install
-          nixpkgs.ghc];
+    ] ++ [pinnedPkgs.cabal-install];
 }
 #+END_SRC
 ** cabal init
-
+after invoking `nix-shell`, `cabal init`
 * Day1
 fix point ?
 https://chrispenner.ca/posts/advent-of-optics-01

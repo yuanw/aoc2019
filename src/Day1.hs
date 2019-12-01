@@ -9,10 +9,10 @@ readInput = do
   return $ map read $ lines content
 
 result :: IO [Int] -> IO Int
-result = fmap (sum . map fixFuel)
+result = fmap (sum . map (fixFuel 0))
 
---TODO using fix point, at least write as tail recursion
+--TODO using fix point
 -- https://medium.com/@cdsmithus/fixpoints-in-haskell-294096a9fc10
-fixFuel :: Int -> Int
-fixFuel x = if y > 6 then y + fixFuel y  else y
-  where y = fuel x
+fixFuel :: Int -> Int -> Int
+fixFuel x y = if z > 6 then fixFuel (x + z) z  else x + z
+  where z = fuel y
