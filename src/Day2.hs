@@ -1,26 +1,26 @@
 module Day2 where
 
-import qualified Data.Vector as V
+import           Control.Monad       (guard)
+import qualified Data.Vector         as V
 import qualified Data.Vector.Mutable as M
-import Control.Monad (guard)
 
 data Op = Add | Multiply | Halt deriving (Eq, Show)
 
 type Position = Int
 
 data Progress = Progress {
-    value  :: V.Vector Int
+    value :: V.Vector Int
   , pos   :: Position
-  , op :: Op
+  , op    :: Op
   } deriving (Eq, Show)
 
 getOp :: Int -> Op
 getOp i = case i of
-  1 -> Add
-  2 -> Multiply
-  99 -> Halt
+  1     -> Add
+  2     -> Multiply
+  99    -> Halt
   other -> error $ "unknown op " ++ show other
-  
+
 
 initProgress :: V.Vector Int -> Progress
 initProgress nums  = Progress nums 0  (getOp $ V.unsafeIndex nums 0)
@@ -48,16 +48,16 @@ halt = const
 
 getOperation :: Op -> V.Vector Int -> Position -> V.Vector Int
 getOperation o = case o of
-  Add -> add
+  Add      -> add
   Multiply -> multiply
-  Halt -> halt
+  Halt     -> halt
 
 run :: Progress -> Progress
 run p = if (op p) == Halt then p else  Progress v' pos' op'
   where  v = value p
          pos' = pos p + 4
          v' = (getOperation . op $ p) (value p) (pos p)
-         op' = getOp (V.unsafeIndex v' pos') 
+         op' = getOp (V.unsafeIndex v' pos')
 
 fix :: Progress -> Progress
 fix p = if p == p' then p' else fix p'
@@ -72,7 +72,7 @@ runResult noun verb = fix (initProgress init'')
 
 
 getOutout :: Progress -> Int
-getOutout p = V.unsafeIndex(value p) 0 
+getOutout p = V.unsafeIndex(value p) 0
 
 show' :: Int -> String
 show' num = if num > 9 then show num else "0" ++ show num
@@ -83,5 +83,5 @@ findAnswer = do
   y <- [0..99]
   guard (getOutout (runResult x y) == 19690720)
   show' x ++ show' y
-  
-  
+
+
