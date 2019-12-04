@@ -39,6 +39,8 @@ after invoking `nix-shell`, `cabal init`
 fix point ?
 https://chrispenner.ca/posts/advent-of-optics-01
 
+* Day2
+https://wiki.haskell.org/Numeric_Haskell:_A_Vector_Tutorial
 
 * TODOs
 ** wire current directory

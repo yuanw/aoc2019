@@ -1,4 +1,4 @@
-module Day1 where
+module Day1 (result) where
 
 fuel :: Int -> Int
 fuel x = (x `div` 3) - 2
@@ -8,8 +8,8 @@ readInput = do
   content <- readFile "./input/day1.txt"
   return $ map read $ lines content
 
-result :: IO [Int] -> IO Int
-result = fmap (sum . map (fixFuel 0))
+result :: IO Int
+result = fmap (sum . map (fixFuel 0)) readInput
 
 --TODO using fix point
 -- https://medium.com/@cdsmithus/fixpoints-in-haskell-294096a9fc10
