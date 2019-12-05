@@ -26,34 +26,28 @@ initProgress :: V.Vector Int -> Progress
 initProgress nums  = Progress nums 0  (getOp $ V.unsafeIndex nums 0)
 
 
-operation :: (Int -> Int -> Int) ->  V.Vector Int -> Int -> Int -> Int -> V.Vector Int
-operation op v from1 from2 to = V.modify (\v' -> M.write v' to (op x y) ) v
-           where x = (V.!) v from1
+operation :: (Int -> Int -> Int) ->  V.Vector Int -> Position -> V.Vector Int
+operation op v p = V.modify (\v' -> M.write v' to (op x y) ) v
+           where from1 = (V.!) v p + 1
+                 from2 = (V.!) v p + 2
+                 to = (V.!) v p + 3
+                 x = (V.!) v from1
                  y = (V.!) v from2
 
 add :: V.Vector Int -> Position -> V.Vector Int
-add v p = operation (+) v x y z
-   where x = (V.!) v (p + 1)
-         y = (V.!) v (p + 2)
-         z = (V.!) v (p + 3)
+add = operation (+)
 
 multiply :: V.Vector Int -> Position -> V.Vector Int
-multiply v p = operation (*) v x y z
-   where x = (V.!) v (p + 1)
-         y = (V.!) v (p + 2)
-         z = (V.!) v (p + 3)
-
-halt :: V.Vector Int -> Position -> V.Vector Int
-halt = const
+multiply = operation (*)
 
 getOperation :: Op -> V.Vector Int -> Position -> V.Vector Int
 getOperation o = case o of
   Add      -> add
   Multiply -> multiply
-  Halt     -> halt
+  Halt     -> const
 
 run :: Progress -> Progress
-run p = if (op p) == Halt then p else  Progress v' pos' op'
+run p = if op p == Halt then p else  Progress v' pos' op'
   where  v = value p
          pos' = pos p + 4
          v' = (getOperation . op $ p) (value p) (pos p)
