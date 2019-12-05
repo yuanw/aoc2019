@@ -15,10 +15,11 @@ data Move = Move {
 
 data Wire = Wire {
     current :: Point
-  , path    :: Set.Set Point} deriving Show
+  , path    :: Set.Set Point
+  , step :: Int } deriving Show
 
 initWire :: Wire
-initWire = Wire (0,0) $ Set.singleton (0,0)
+initWire = Wire (0,0) (Set.singleton (0,0)) 0
 
 travel :: Point -> Turn -> Int -> (Point,Set.Set Point)
 travel (x,y) dir d = case dir of
@@ -28,7 +29,7 @@ travel (x,y) dir d = case dir of
    R ->  ((x, y+d), Set.fromList [(x, y+i) | i <- [1..d]])
 
 shift :: Wire -> Move -> Wire
-shift before m = Wire point' (Set.union path' (path before))
+shift before m = Wire point' (Set.union path' (path before)) (step before + dest m)
     where (point', path') = travel (current before) (turn m) (dest m)
 
 --TODO figure foldr vs foldl
@@ -44,7 +45,16 @@ readMoves :: String -> [Move]
 readMoves = map readMove . splitOn ","
   where
     readMove :: String -> Move
-    readMove i = Move (read $ [head i]) (read $ tail i)
+    readMove i = Move (read [head i]) (read $ tail i)
 
-m1 = readMoves "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"
-m2 = readMoves "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"
+
+getMoves :: IO ([Move], [Move])
+getMoves = do
+    content <- readFile "./input/day3.txt"
+    let moves = map readMoves $ lines content
+    return (head moves, (head . tail) moves)
+
+partI :: IO ()
+partI = do
+  (m1, m2) <- getMoves
+  print $ closestDistance m1 m2
