@@ -1,10 +1,7 @@
 { nixpkgs ? import <nixpkgs> {} , compiler ? "ghc865" }:
 let
-  inherit (nixpkgs) haskellPackages;
-  myPackages = haskellPackages.callCabal2nix "project" ./aoc2019.cabal {};
-
+  inherit (nixpkgs) haskellPackages; 
   bootstrap = import <nixpkgs> { };
-
   nixpgs-19-03-beta = builtins.fromJSON (builtins.readFile ./nix/nixpkgs-19-03-beta.json);
 
   src = bootstrap.fetchFromGitHub {
@@ -14,6 +11,7 @@ let
   };
 
   pinnedPkgs = import src { };
+  myPackages = pinnedPkgs.haskellPackages.callCabal2nix "project" ./aoc2019.cabal {};
   all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
 in
  haskellPackages.shellFor {

@@ -1,6 +1,7 @@
 module Day3 where
 
-import qualified Data.Set as Set
+import           Data.Maybe (fromJust)
+import qualified Data.Map as Map
 import           Data.List.Split (splitOn)
 
 data Turn = U | R | D | L
@@ -9,38 +10,48 @@ data Turn = U | R | D | L
 type Point = (Int, Int)
 
 data Move = Move {
-     turn :: Turn
-   , dest :: Int
+     turn :: !Turn
+   , dest :: !Int
    } deriving (Show)
 
 data Wire = Wire {
     current :: Point
-  , path    :: Set.Set Point
-  , step :: Int } deriving Show
+  , path    :: Map.Map Point Int
+  , step :: !Int } deriving Show
 
 initWire :: Wire
-initWire = Wire (0,0) (Set.singleton (0,0)) 0
+initWire = Wire (0,0) (Map.singleton (0,0) 0) 0
 
-travel :: Point -> Turn -> Int -> (Point,Set.Set Point)
-travel (x,y) dir d = case dir of
-   U -> ((x+d, y), Set.fromList [(x+i, y) | i <- [1..d]])
-   D -> ((x-d, y), Set.fromList [(x-i, y) | i <- [1..d]])
-   L ->  ((x, y-d), Set.fromList [(x, y-i) | i <- [1..d]])
-   R ->  ((x, y+d), Set.fromList [(x, y+i) | i <- [1..d]])
+travel :: Point -> Turn -> Int -> Int -> (Point, Map.Map Point Int)
+travel (x,y) dir d s = case dir of
+   U -> ((x+d, y), Map.fromList [((x+i, y), s +i ) | i <- [1..d]])
+   D -> ((x-d, y), Map.fromList [((x-i, y), s + i) | i <- [1..d]])
+   L ->  ((x, y-d), Map.fromList [((x, y-i), s +i) | i <- [1..d]])
+   R ->  ((x, y+d), Map.fromList [((x, y+i), s+i) | i <- [1..d]])
 
 shift :: Wire -> Move -> Wire
-shift before m = Wire point' (Set.union path' (path before)) (step before + dest m)
-    where (point', path') = travel (current before) (turn m) (dest m)
+shift before m = Wire point' (Map.union (path before)  path') (step before + dest m)
+    where (point', path') = travel (current before) (turn m) (dest m) (step before)
+
+
+type Find = Wire -> Wire -> [Point] -> Int
+
+closest :: Find
+closest w1 w2 crossed = minimum $ map (\ p -> (abs . fst) p + (abs . snd) p) crossed
+
+fewest :: Find
+fewest w1 w2 crossed = minimum $ map (\ p -> fromJust (Map.lookup p m1) + fromJust (Map.lookup p m2)) crossed
+    where m1 = path w1
+          m2 = path w2 
 
 --TODO figure foldr vs foldl
-crossPath :: [Move] -> [Move] -> Set.Set Point
-crossPath m1 m2 = Set.intersection (path p1) (path p2)
-  where p1 = foldl shift initWire m1
-        p2 = foldl shift initWire m2
+closestDistance :: [Move] -> [Move] -> Find -> Int
+closestDistance m1 m2 find = find wire1 wire2 crossed
+  where wire1 = foldl shift initWire m1
+        wire2 = foldl shift initWire m2
+        crossed = (Map.keys . Map.filter (/= 0)) $ Map.intersection (path wire1) (path wire2)
 
-closestDistance :: [Move] -> [Move] -> Maybe Int
-closestDistance m1 m2 = Set.lookupGT 0 . Set.fromList . map (\p -> (abs $ fst p) + (abs $ snd p)) . Set.toList  . Set.delete (0,0)  $ crossPath m1 m2
-
+        
 readMoves :: String -> [Move]
 readMoves = map readMove . splitOn ","
   where
@@ -57,4 +68,9 @@ getMoves = do
 partI :: IO ()
 partI = do
   (m1, m2) <- getMoves
-  print $ closestDistance m1 m2
+  print $ closestDistance m1 m2 closest
+
+partII :: IO ()
+partII = do
+  (m1, m2) <- getMoves
+  print $ closestDistance m1 m2 fewest
