@@ -11,7 +11,7 @@ let
   };
 
   pinnedPkgs = import src { };
-  myPackages = pinnedPkgs.haskellPackages.callCabal2nix "project" ./aoc2019.cabal {};
+  myPackages = haskellPackages.callCabal2nix "project" ./aoc2019.cabal {};
   all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
 in
  haskellPackages.shellFor {

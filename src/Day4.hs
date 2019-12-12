@@ -15,7 +15,7 @@ sameAdjacentDigits = same .show
 
 --
 partI :: IO ()
-partI = (print  . length)$  filter (\ a -> neverDecrease a && sameAdjacentDigits a) [367479..893698]
+partI = (print  . length)$  filter (\ a -> neverDecrease a && sameAdjacentDigits a) [134564..585159]
 
 reduce :: Int -> Map.Map Int Int
 reduce a = foldr (\c m -> Map.insertWith (+) (read [c]) 1 m) Map.empty s
@@ -26,4 +26,4 @@ notPartLarge = (/= 0) . Map.size  .   Map.filter (== 2)  . reduce
 
 
 partII :: IO ()
-partII = (print  . length)$  filter (\ a -> neverDecrease a && sameAdjacentDigits a && notPartLarge a) [367479..893698]
+partII = (print  . length)$  filter (\ a -> neverDecrease a && sameAdjacentDigits a && notPartLarge a) [134564..585159]
