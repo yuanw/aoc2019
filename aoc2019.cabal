@@ -26,6 +26,7 @@ library
   -- other-extensions:
   build-depends:       base ^>=4.12.0.0
                      , containers
+                     , conduit
                      , split
                      , vector
   hs-source-dirs:      src

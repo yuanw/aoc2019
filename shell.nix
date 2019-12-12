@@ -18,10 +18,10 @@ in
    withHoogle = true;
    packages = p: [myPackages];
    buildInputs = with nixpkgs.haskellPackages;
-    [ hlint
-      ghcid
-      stylish-haskell
-      hoogle
+     [ hlint
+       ghcid
+       stylish-haskell
+       hoogle
       (all-hies.selection {selector = p: {inherit (p) ghc865; };})
     ] ++ [pinnedPkgs.cabal-install];
 }
